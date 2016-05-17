@@ -10,10 +10,12 @@ MeBuzzer buzzer;
 MeDCMotor MotorL(M1);
 MeDCMotor MotorR(M2);
 MePort generalDevice;
+MePort lightsensor(8);
 
-int defaultSpeed = 200;
+int defaultSpeed = 100;
 int minSpeed = 48;
 int maxSpeed = 250;
+int minDistance = 10;
 
 int moveSpeed = defaultSpeed;
 
@@ -25,78 +27,26 @@ void setup()
 }
 
 void loop()
-{
-  // disco
-  disco();
-
-  // motor control
-  motorDemo();
-
-  // distance sensor
-  distanceDemo();
-
+{  
   // line follow sensor
   lineFollowDemo();
+
+  // distance sensor
+  // distanceDemo();
+  
+  delay(10);  
 }
 
 
 
 void  disco()
 {
-  rgb.setNumber(16);
-  rgb.clear();
-  rgb.setColor(10, 0, 0);
-  buzzer.tone(294, 300); 
-  delay(30);
-  rgb.setColor(0, 10, 0);
-  buzzer.tone(330, 300);
-  delay(30);
-  rgb.setColor(0, 0, 10);
-  buzzer.tone(350, 300);
-  delay(30);
-  rgb.clear();
-
   buzzer.noTone();
 }
        
 void motorDemo() 
 {
-  Serial.print("Move Speed: ");
-  Serial.println(moveSpeed);
-  
-  Serial.println("Forward!");
-  forward();
-  delay(1000);
-  
-  Serial.println("Backward!");
-  backward();
-  delay(1000);
-  
-  Serial.println("TurnLeft!");
-  turnLeft();
-  delay(1000);
-  
-  Serial.println("TurnRight!");
-  turnRight();
-  delay(1000);
 
-  Serial.println("ChangeSpeed to minSpeed and Forward");
-  changeSpeed(minSpeed);
-  forward();
-  delay(1000);
-
-  Serial.println("ChangeSpeed to maxSpeed and Forward");
-  changeSpeed(maxSpeed);
-  forward();
-  delay(1000);
-
-  Serial.println("ChangeSpeed to maxSpeed and Forward");
-  changeSpeed(maxSpeed);
-  forward();
-  delay(1000);
-
-  Serial.println("Halt");
-  halt();
 }
 
 void forward()
@@ -119,6 +69,51 @@ void turnRight()
   MotorL.run(-moveSpeed);
   MotorR.run(moveSpeed/10);
 }
+
+void rotateLeft() {  
+  rgb.setColor(0, 255,0,0);
+  rgb.show();
+
+  uint8_t val;
+  do {
+    MotorL.run(moveSpeed);
+    MotorR.run(moveSpeed);
+    delay(5);
+    val = line.readSensors();
+  } while (val != S1_OUT_S2_OUT);
+  do {
+    MotorL.run(moveSpeed);
+    MotorR.run(moveSpeed);
+    delay(5);
+    val = line.readSensors();
+  } while (val != S1_IN_S2_IN);
+
+  delay(60);
+  halt();
+}
+
+void rotateRight() {  
+  rgb.setColor(0, 0,255,0);
+  rgb.show();
+  
+  uint8_t val;
+  do {
+    MotorL.run(-moveSpeed);
+    MotorR.run(-moveSpeed);
+    delay(5);
+    val = line.readSensors();
+  } while (val != S1_OUT_S2_OUT);
+  do {
+    MotorL.run(-moveSpeed);
+    MotorR.run(-moveSpeed);
+    delay(5);
+    val = line.readSensors();
+  } while (val != S1_IN_S2_IN);
+
+  delay(60);
+  halt();
+}
+
 void halt()
 {
   rgb.clear();
@@ -136,12 +131,18 @@ void changeSpeed(int spd)
 void distanceDemo()
 {
   uint8_t d = ultr.distanceCm(50);
-  Serial.print("Distance: ");
-  Serial.println(d);
+  if (d>0 && d < minDistance) {
+    Serial.print("distance: ");
+    Serial.println(d);
+    halt();
+  }
 }
 
 void lineFollowDemo()
 {
+  rgb.setColor(0, 0,0,255);
+  rgb.show();
+  
   uint8_t val = line.readSensors();
 
   bool leftIn = false;
@@ -150,29 +151,107 @@ void lineFollowDemo()
   switch (val)
   {
     case S1_IN_S2_IN:
-      leftIn = true;
-      rightIn = true;
+      forward();
       break;
 
     case S1_IN_S2_OUT:
-      leftIn  = true;
-      rightIn = false;
+      turnLeft();
       break;
 
     case S1_OUT_S2_IN:
-      leftIn = false;
-      rightIn = true;
+      turnRight();
       break;
 
     case S1_OUT_S2_OUT:
-      leftIn = false;
-      rightIn = false;
+      forward();
+      delay(350);
+      halt();
+
+      determineDirection();
+      
       break;
   }
-  Serial.print("LeftIn: ");
-  Serial.println(leftIn);
-  Serial.print("RightIn: ");
-  Serial.println(rightIn);
 }
 
+void checkFinish()
+{
+    rgb.setColor(0, 0,0,0);
+    rgb.show();
+    double lightVal = lightsensor.aRead2();
+    Serial.print("lightsensor value: ");
+    Serial.println(lightVal);
+
+    if (lightVal < 500) {
+      halt();
+      playTheMusic();
+    }
+// if blabla then playmusic
+}
+
+void playTheMusic(){
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(523, 250);
+    delay(260);
+    buzzer.tone(587, 250);
+    delay(260);
+    buzzer.tone(587, 250);
+    delay(260);
+    buzzer.tone(523, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(440, 250);
+    delay(260);
+    buzzer.tone(392, 250);
+    delay(260);
+    buzzer.tone(392, 250);
+    delay(260);
+    buzzer.tone(440, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    buzzer.tone(494, 125);
+    delay(385);
+    buzzer.tone(440, 125);
+    delay(135);
+    buzzer.tone(440, 500);
+}
+
+void determineDirection()
+{
+  checkFinish();
+  rotateLeft();
+  bool wall = detectWall();
+  // links
+  if (wall) {
+    rotateRight();
+  } else {
+    return;
+  }
+
+  // rechtdoor
+  wall = detectWall();
+  if (wall) {
+    rotateRight();
+  } else {
+    return;
+  }
+
+  // rechts
+  wall = detectWall();
+  if (wall) {
+    rotateRight();
+  } else {
+    return;
+  }
+}
+
+bool detectWall() {
+  uint8_t d = ultr.distanceCm(50);
+  return d>0 && d < 30;
+}
 
