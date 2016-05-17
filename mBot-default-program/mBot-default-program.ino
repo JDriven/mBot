@@ -18,7 +18,7 @@ int maxSpeed = 250;
 int minDistance = 10;
 
 int moveSpeed = defaultSpeed;
-int forwardSpeed = defaultSpeed * 2;
+int forwardSpeed = 200;
 
 void setup()
 {
@@ -52,27 +52,32 @@ void motorDemo()
 
 void forward()
 {
+  MotorL.run(-forwardSpeed);
+  MotorR.run(forwardSpeed);
+}
+void forwardSlow()
+{
   MotorL.run(-moveSpeed);
   MotorR.run(moveSpeed);
 }
 void backward()
 {
-  MotorL.run(moveSpeed); 
-  MotorR.run(-moveSpeed);
+  MotorL.run(forwardSpeed); 
+  MotorR.run(-forwardSpeed);
 }
 void turnLeft()
 {
-  MotorL.run(-moveSpeed/10);
-  MotorR.run(moveSpeed);
+  MotorL.run(-forwardSpeed/10);
+  MotorR.run(forwardSpeed);
 }
 void turnRight()
 {
-  MotorL.run(-moveSpeed);
-  MotorR.run(moveSpeed/10);
+  MotorL.run(-forwardSpeed);
+  MotorR.run(forwardSpeed/10);
 }
 
 void rotateLeft() {  
-  rgb.setColor(0, 128,0,0);
+  rgb.setColor(0, 64,0,0);
   rgb.show();
 
   uint8_t val;
@@ -94,7 +99,7 @@ void rotateLeft() {
 }
 
 void rotateRight() {  
-  rgb.setColor(0, 0,128,0);
+  rgb.setColor(0, 0,64,0);
   rgb.show();
   
   uint8_t val;
@@ -141,7 +146,7 @@ void distanceDemo()
 
 void lineFollowDemo()
 {
-  rgb.setColor(0, 0,0,128);
+  rgb.setColor(0, 0,0,0);
   rgb.show();
   
   uint8_t val = line.readSensors();
@@ -164,7 +169,7 @@ void lineFollowDemo()
       break;
 
     case S1_OUT_S2_OUT:
-      forward();
+      forwardSlow();
       delay(350);
       halt();
 
@@ -178,7 +183,6 @@ void checkFinish()
 {
     rgb.setColor(0, 0,0,0);
     rgb.show();
-    delay(50);
     
     double lightVal = lightsensor.aRead2();
     Serial.print("lightsensor value: ");
@@ -252,6 +256,8 @@ void playTheMusic(){
     delay(135);
     buzzer.tone(392, 500);
 }
+
+
 
 void determineDirection()
 {
