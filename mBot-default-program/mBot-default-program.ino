@@ -10,12 +10,16 @@ MeBuzzer buzzer;
 MeDCMotor MotorL(M1);
 MeDCMotor MotorR(M2);
 MePort generalDevice;
+MePort lightSensor(8);
+
 
 int defaultSpeed = 200;
 int minSpeed = 48;
 int maxSpeed = 250;
 
 int moveSpeed = defaultSpeed;
+double lightStrength;
+
 
 void setup()
 {
@@ -37,6 +41,10 @@ void loop()
 
   // line follow sensor
   lineFollowDemo();
+
+  // light sensor
+  lightSensorDemo();
+  delay(500);
 }
 
 
@@ -173,6 +181,12 @@ void lineFollowDemo()
   Serial.println(leftIn);
   Serial.print("RightIn: ");
   Serial.println(rightIn);
+}
+
+void lightSensorDemo() {
+   lightStrength = lightSensor.aRead2();
+   Serial.print("LightStrength: ");
+   Serial.println(lightStrength);
 }
 
 
