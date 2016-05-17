@@ -18,6 +18,7 @@ int maxSpeed = 250;
 int minDistance = 10;
 
 int moveSpeed = defaultSpeed;
+int forwardSpeed = defaultSpeed * 2;
 
 void setup()
 {
@@ -71,7 +72,7 @@ void turnRight()
 }
 
 void rotateLeft() {  
-  rgb.setColor(0, 255,0,0);
+  rgb.setColor(0, 128,0,0);
   rgb.show();
 
   uint8_t val;
@@ -93,7 +94,7 @@ void rotateLeft() {
 }
 
 void rotateRight() {  
-  rgb.setColor(0, 0,255,0);
+  rgb.setColor(0, 0,128,0);
   rgb.show();
   
   uint8_t val;
@@ -140,7 +141,7 @@ void distanceDemo()
 
 void lineFollowDemo()
 {
-  rgb.setColor(0, 0,0,255);
+  rgb.setColor(0, 0,0,128);
   rgb.show();
   
   uint8_t val = line.readSensors();
@@ -177,6 +178,8 @@ void checkFinish()
 {
     rgb.setColor(0, 0,0,0);
     rgb.show();
+    delay(50);
+    
     double lightVal = lightsensor.aRead2();
     Serial.print("lightsensor value: ");
     Serial.println(lightVal);
@@ -213,12 +216,41 @@ void playTheMusic(){
     delay(260);
     buzzer.tone(494, 250);
     delay(260);
-    buzzer.tone(494, 250);
-    buzzer.tone(494, 125);
+    buzzer.tone(494, 375);
     delay(385);
     buzzer.tone(440, 125);
     delay(135);
     buzzer.tone(440, 500);
+    delay(510);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(523, 250);
+    delay(260);
+    buzzer.tone(587, 250);
+    delay(260);
+    buzzer.tone(587, 250);
+    delay(260);
+    buzzer.tone(523, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(440, 250);
+    delay(260);
+    buzzer.tone(392, 250);
+    delay(260);
+    buzzer.tone(392, 250);
+    delay(260);
+    buzzer.tone(440, 250);
+    delay(260);
+    buzzer.tone(494, 250);
+    delay(260);
+    buzzer.tone(440, 375);
+    delay(385);
+    buzzer.tone(392, 125);
+    delay(135);
+    buzzer.tone(392, 500);
 }
 
 void determineDirection()
