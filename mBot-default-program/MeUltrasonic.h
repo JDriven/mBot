@@ -13,6 +13,7 @@ class MeUltrasonic: public MePort
 	    double distanceCm(uint16_t maxCm);
 	    double distanceInch(uint16_t maxInch);
 	    long measure(unsigned long timeout);
+      double measureSmooth();
 	private:
 		uint8_t _pin;
 };
