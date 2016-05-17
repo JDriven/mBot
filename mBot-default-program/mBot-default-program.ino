@@ -27,16 +27,18 @@ void setup()
 void loop()
 {
   // disco
-  disco();
+//  disco();
 
   // motor control
-  motorDemo();
+//  motorDemo();
 
   // distance sensor
   distanceDemo();
 
   // line follow sensor
   lineFollowDemo();
+
+  delay(1000);
 }
 
 
