@@ -262,11 +262,11 @@ void playTheMusic(){
 void determineDirection()
 {
   checkFinish();
-  rotateLeft();
+  rotateRight();
   bool wall = detectWall();
   // links
   if (wall) {
-    rotateRight();
+    rotateLeft();
   } else {
     return;
   }
@@ -274,7 +274,7 @@ void determineDirection()
   // rechtdoor
   wall = detectWall();
   if (wall) {
-    rotateRight();
+    rotateLeft();
   } else {
     return;
   }
@@ -282,7 +282,7 @@ void determineDirection()
   // rechts
   wall = detectWall();
   if (wall) {
-    rotateRight();
+    rotateLeft();
   } else {
     return;
   }
